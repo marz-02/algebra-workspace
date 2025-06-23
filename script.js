@@ -34,9 +34,10 @@ function getSymbol(type) {
     default: return "?";
   }
 }
-
+/*
 document.addEventListener("DOMContentLoaded", () => {
   const paper = document.getElementById("paper");
   const exprElem = renderExpression(expr1);
   paper.appendChild(exprElem);
 });
+*/

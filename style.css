@@ -48,107 +48,52 @@ main {
 .line {
   border-bottom: 1px solid #ccc;
   padding: 0.5rem 0;
-  text-align: left;
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  background-color: yellowgreen;
 }
 
-/* Expression rendering */
 .expression {
-  display: inline-flex;
-  gap: 0.5rem;
+  background-color: aquamarine;
+  display: flex;
+  flex-direction: row;      /* horizontal stacking */
+  align-items: center;  
+  justify-content: center;  /* space items centered horizontally */
+  width: fit-content;
+  margin: 2px;
+  outline: 1px solid black; /* Add a border for visibility */
 }
 
-.term, .op {
-  padding: 0.3rem 0.6rem;
-  border: 1px solid #999;
-  border-radius: 4px;
-  background-color: white;
-  font-family: monospace;
+.fraction {
+  display: flex;
+  flex-direction: column; /* vertical stacking */
+  align-items: flex-start; /* don't stretch width */
+  width: fit-content;   
 }
 
-/* === Layout Resets === */
-.math * {
-  box-sizing: border-box;
+.numerator, .denominator {
+  background-color: wheat;
 }
 
-/* === Top-Level Equation === */
-.math .equation {
+.vinculum {
+  height: 2px;
+  background-color: black;
+  width: 100%; /* Make the vinculum stretch across the fraction */
+  display: block;
+  margin: 0.1em 0;
+}
+
+.var, .const {
+  background-color: thistle;
+}
+
+.operator {
+
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 1rem;
-
-  font-size: var(--eq-font-size, 1.5rem);
-  font-family: var(--eq-font-family, monospace);
-  margin: var(--eq-margin, 1rem);
-  padding: var(--eq-padding, 0.5rem);
-  border: var(--eq-border, 1px solid #ccc);
-  border-radius: var(--eq-radius, 8px);
+  justify-content: center  
 }
 
-/* === Expression Block === */
-.math .expression {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--expr-gap, 0.5rem);
-  padding: var(--expr-padding, 0.2rem 0.4rem);
-  background-color: var(--expr-bg, #eef);
-  border-radius: var(--expr-radius, 4px);
-}
-
-/* === Addition Group === */
-.math .add {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--add-gap, 0.25rem);
-  padding: var(--add-padding, 0.2rem 0.3rem);
-  border: var(--add-border, 1px dashed #aaa);
-  background-color: var(--add-bg, #f9f9f9);
-  border-radius: var(--add-radius, 4px);
-}
-
-.math .add > *:not(:last-child)::after {
-  content: "+";
-  margin-left: var(--add-symbol-gap, 0.25rem);
-  margin-right: var(--add-symbol-gap, 0.25rem);
-  color: var(--add-symbol-color, #444);
-}
-
-/* === Fraction === */
-.math .fraction {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.math .fraction .numerator,
-.math .fraction .denominator {
-  padding: var(--frac-part-padding, 0.1rem 0.3rem);
-}
-
-.math .fraction .bar {
-  width: 100%;
-  height: 1px;
-  background-color: var(--frac-bar-color, #000);
-  margin: var(--frac-bar-margin, 2px 0);
-}
-
-/* === Variables and Constants === */
-.math .var,
-.math .constant {
-  padding: var(--leaf-padding, 0.1rem 0.3rem);
-  border-radius: var(--leaf-radius, 4px);
-  background-color: var(--leaf-bg, #fff);
-  border: var(--leaf-border, 1px solid #ccc);
-  min-width: var(--leaf-min-width, 1rem);
-  text-align: center;
-}
-
-/* Optional colors for var/constant distinction */
-.math .var {
-  background-color: var(--var-bg, #def);
-}
-
-.math .constant {
-  background-color: var(--const-bg, #fde);
-}
