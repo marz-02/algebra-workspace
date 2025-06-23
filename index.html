@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expression Page</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>My Website</h1>
+  </header>
+
+  <section class="controls">
+    <input type="text" id="inputField" placeholder="Type something..." />
+    <button id="addButton">Add Expression</button>
+  </section>
+
+  <main>
+    <div class="paper" id="paper">
+      <!-- Expression lines will be added here -->
+        <div class="math">
+  <div class="equation">
+    <div class="expression add">
+      <div class="var">x</div>
+      <div class="var">y</div>
+      <div class="constant">3</div>
+    </div>
+    <span>=</span>
+    <div class="expression fraction">
+      <div class="numerator expression add">
+        <div class="var">a</div>
+        <div class="var">b</div>
+      </div>
+      <div class="bar"></div>
+      <div class="denominator expression">
+        <div class="var">c</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
