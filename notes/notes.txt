@@ -1,0 +1,70 @@
+for the following
+
+\frac {n^2 \pi^2 \hbar ^2 } {2 m L^2}
+
+we will have the tree
+
+Frac(
+    Mult(
+        Pow( Var("n") , Const(2) ),
+        Pow( Var("\pi") , Const(2) ),
+        Pow( Var("\hbar") , Const(2) ) 
+        ),
+    Mult(
+        Const(2),
+        Var("m"),
+        Pow( Var("L") , Const (2))
+    )
+)
+
+<span class="expression fraction">
+  <span class="expression numerator">
+    <span class="expression mul">
+      <span class="expression pow">
+        <span class="expression var">n</span>
+        <span class="expression const">2</span>
+      </span>
+      <span class="expression pow">
+        <span class="expression var">&pi;</span>
+        <span class="expression const">2</span>
+      </span>
+      <span class="expression pow">
+        <span class="expression var">&hbar;</span>
+        <span class="expression const">2</span>
+      </span>
+    </span>
+  </span>
+  <span class="vinculum"></span>
+  <span class="expression denominator">
+    <span class="expression mul">
+      <span class="expression const">2</span>
+      <span class="expression var">m</span>
+      <span class="expression pow">
+        <span class="expression var">L</span>
+        <span class="expression const">2</span>
+      </span>
+    </span>
+  </span>
+</span>
+
+<style>
+  .expression {
+    font-family: 'STIX Two Math', 'STIX Math', 'Times New Roman', Times, serif;
+  }
+</style>
+
+
+
+
+
+<div class="line" id="line1">
+  <span class="equation">
+    <span class="expression lhs">
+    
+    </span>
+    <span class="equals">=</span>
+    <span class="expression rhs">
+
+    </span>
+  </span>
+</div>

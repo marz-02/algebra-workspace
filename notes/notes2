@@ -1,0 +1,20 @@
+# Heading
+
+
+HTTP methods
+
+GET: Asks the server for data (like loading a web page).
+
+POST: Sends new data to the server — typically used for forms, JSON payloads, or actions (like saving or submitting).
+
+to do:
+
+implement move function,
+
+implement expr to json
+
+implement json to html
+
+implement drag beviour
+
+s

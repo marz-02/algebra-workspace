@@ -1,0 +1,186 @@
+body {
+  margin: 0;
+  font-family: 'STIX Two Math', 'STIX Math', 'Times New Roman', Times, serif;
+  background-color: #f0f0f0;
+  text-align: center;
+  font-size: 1.2em; /* Set your desired base font size here */
+}
+
+header {
+  background-color: #333;
+  color: white;
+  padding: 1rem;
+}
+
+.controls {
+  margin: 1rem;
+}
+
+input {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+main {
+  display: block;
+}
+
+.testbutton {
+  position: fixed;        /* Removes it from the DOM flow */
+  top: 10px;              /* Distance from the top edge */
+  left: 10px;             /* Distance from the left edge */
+  z-index: 9999;          /* Puts it on top of most elements */
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: #e91e63;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.paper {
+  background: white;
+  width: 90%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.equation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4em;
+  margin: 8px 0;
+  font-size: 1.1em;         /* Slightly larger than base text */
+}
+
+.lhs,
+.rhs {
+  display: inline-flex;
+  align-items: center;
+}
+
+.equals {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0 8px;
+  color: #222;
+}
+
+.operator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1em;
+  font-weight: bold;
+  margin: 0 3px;
+  color: #222;
+}
+
+/* General expression block */
+.expression {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 2px;
+  font-family: inherit;
+  vertical-align: middle;
+  font-size: 1em;
+}
+
+/* Variable and constant styling */
+.var, .const {
+  font-family: inherit;
+  font-style: italic;
+  font-size: 1em;      /* Default size for all variables/constants */
+  margin: 0 1px;
+}
+
+.const {
+  font-style: normal;
+}
+
+
+
+/* Addition: show addends inline */
+.add {
+  flex-direction: row;
+  gap: 0.15em;
+}
+
+/* Multiplication: show factors inline */
+.mul {
+  flex-direction: row;
+  gap: 0.15em;
+}
+
+/* Fraction container */
+.fraction {
+  flex-direction: column;
+  align-items: stretch;
+  position: relative;
+}
+
+/* Numerator and denominator */
+.numerator,
+.denominator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Vinculum (fraction bar) */
+.vinculum {
+  height: 2px;
+  background: black;
+  width: 100%;
+  display: block;
+  margin: 0.1em 0;
+}
+
+.pow {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.pow > .var,
+.pow > .const {
+  font-size: 1em;
+  margin-right: 0;
+}
+
+.base {
+  font-size: 1em;
+  font-style: italic;
+  display: inline-flex;
+  align-items: center;
+}
+
+.indicie,
+.pow > .const.exponent {
+  font-size: 0.65em;         /* or 0.8em if you want 80% instead */
+  font-style: normal;
+  vertical-align: super;
+  margin-left: 1px;
+  margin-right: 0;
+  align-self: flex-start;
+}
+
+

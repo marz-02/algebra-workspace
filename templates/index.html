@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expression Page</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <header>
+    <h1>My Website</h1>
+  </header>
+
+  <section class="controls">
+    <input type="text" id="inputField" placeholder="Type something..." />
+    <button id="addButton">Add Expression</button>
+  </section>
+
+  <main>
+    <button class="testbutton" id="testButton">Test</button>
+    <div class="paper" id="paper">
+      <div class="line" id="line1">
+      </div>
+      <div class="line" id="line2">
+        <span class="equation">
+          <span class="expression lhs">
+            <span class="expression add">
+             <span class="expression var">x</span>
+             <span class="operator">+</span>
+             <span class="expression var">y</span>
+            </span>
+          </span>
+          <span class="equals">=</span>
+          <span class="expression rhs">
+            <span class="expression var">z</span>
+          </span>
+        </span>
+      </div>
+      <div class="line" id="line3">
+        <span class="equation">
+          <span class="expression lhs">
+            <span class="expression fraction">
+              <span class="expression numerator">
+                <span class="expression mul">
+                  <span class="expression pow">
+                    <span class="expression base">
+                      <span class="expression var">n</span>
+                    </span>
+                    <span class="expression indicie">
+                      <span class="expression const">2</span>
+                    </span>
+                  </span>
+                  <span class="expression pow">
+                    <span class="expression base">
+                      <span class="expression var">&pi;</span>
+                    </span>
+                    <span class="expression indicie">
+                      <span class="expression const">2</span>
+                    </span>
+                  </span>
+                  <span class="expression pow">
+                    <span class="expression base">
+                      <span class="expression var">&hbar;</span>
+                    </span>
+                    <span class="expression indicie">
+                      <span class="expression const">2</span>
+                    </span>
+                  </span>
+                </span>
+              </span>
+              <span class="vinculum"></span>
+              <span class="expression denominator">
+                <span class="expression mul">
+                  <span class="expression const">2</span>
+                  <span class="expression var">m</span>
+                  <span class="expression pow">
+                    <span class="expression base">
+                      <span class="expression var">L</span>
+                    </span>
+                    <span class="expression indicie">
+                      <span class="expression const">2</span>
+                    </span>
+                  </span>
+                </span>
+              </span>
+            </span>
+          </span>
+          <span class="equals">=</span>
+          <span class="expression rhs">
+            <span class="expression var">a</span>
+          </span>
+        </span>
+      </div>
+    </div>
+  </main>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</body>
+
+</html>
