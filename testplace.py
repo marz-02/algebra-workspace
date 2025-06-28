@@ -13,6 +13,10 @@ line1 = Eq(
     Var("z")
 )
 
+
+
+
+"""
 q = Var("q")
 
 qid = q.get_id()
@@ -21,7 +25,7 @@ line2 = Eq(
     Add( Var("x"), q),
     Var("z")
 )
-
+"""
 #print(line1.get_id())
 
 #print(line2.find_by_id(qid), qid)
@@ -66,14 +70,17 @@ print("-------------------------------------------------------------------------
 
 print("\n",line1xx,"\n")
 
-print(line1xx.get_subexprs())
+#print(line1xx.get_subexprs())
 
 idofy = (line1xx.get_subexprs()[0]).get_subexprs()[1].get_id()
-print(idofy)
 
-print(line1xx.pop_expr(idofy, "lhs"))
 
-print(line1xx)
+line1xx = line1xx.move_expr(idofy, "lhs")
+print("\n",line1xx,"\n")
+
+#print(line1xx.pop_expr(idofy, "lhs"))
+
+
 
 
 #thisy = line1xx.find_by_id(idofy)
@@ -82,3 +89,5 @@ print(line1xx)
 
 
 print("-------------------------------------------------------------------------------------")
+
+print(line1xx.to_dict())

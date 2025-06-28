@@ -32,6 +32,9 @@ class Var(Expr):
 
     def to_latex(self):
         return f"{{{self.name}}}"
+    
+    def to_dict(self):
+        return {"type": "var", "name": self.name, "id": self.id}
 
 class Const(Expr):
     def __init__(self, value):
@@ -60,3 +63,6 @@ class Const(Expr):
 
     def to_latex(self):
         return f"{{{self.value}}}"
+    
+    def to_dict(self):
+        return {"type": "const", "value": self.value, "id": self.id}

@@ -1,35 +1,21 @@
 from flask import Flask, render_template, request, jsonify
-from symbolic_math import Expr, Var, Const, Add, Mult, Eq
+from symbolic_math import Expr, Var, Const, Neg, Add, Mult, Eq
 import uuid
 app = Flask(__name__) #Creates a new Flask application instance.
 
-
-###---Test-Zone--------------------------------------------------------------------------
-
-line1xx = Eq(
-    Add( Var("x"), Var("y")),
-    Var("z")
+expr = Eq(
+    Add(Var("x")),
+    Add(Var("z"), Neg(Var("y")))
 )
-print("-------------------------------------------------------------------------------------")
 
-print("\n",line1xx,"\n")
+expr_dict = expr.to_dict()
 
-print(line1xx.get_subexprs())
-
-idofy = (line1xx.get_subexprs()[0]).get_subexprs()[1].get_id()
-print(idofy)
-
-print(line1xx.pop_expr(idofy, "lhs"))
-
-print(line1xx)
+@app.route("/get_expression", methods=["GET"])
+def get_expression():
+    return jsonify(expr_dict)
 
 
-#thisy = line1xx.find_by_id(idofy)
 
-#thisy = None
-
-
-print("-------------------------------------------------------------------------------------")
 
 def generate_expression():
     def make_var(name):
@@ -51,8 +37,6 @@ def generate_expression():
 def expression():
     return jsonify(generate_expression())
 
-
-###---End-of-Test-Zone---------------------------------------------------------------------
 
 
 #Defines the homepage route (/). 

@@ -1,0 +1,38 @@
+
+Var
+{
+    "type" : "var"
+    "name" : "x"
+    "id" : "23123123123"
+}
+
+Const
+{
+    "type" : "const"
+    "value" : "1"
+    "id" : "23123123123"
+}
+
+Neg{}
+
+Add
+{
+    "type" : "add"
+    "terms" : []
+    "id" : ""
+}
+
+Mult
+{
+    "type" : "mult"
+    "factors" : []
+    "id" : ""
+}
+
+Eq
+{
+    "type" : "eq"
+    "lhs" : {}
+    "rhs" : {}
+    "id" : ""
+}

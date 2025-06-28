@@ -10,7 +10,16 @@ class Add(Expr):
         self.id = str(uuid.uuid4())
 
     def __str__(self):
-        return " + ".join(str(term) for term in self.terms)
+        for i, term in enumerate(self.terms):
+            if i == 0:
+                expression = str(term)
+            else:
+                if isinstance(term, Neg):
+                    expression += " - " + str(term.expr) 
+                else:
+                    expression += " + " + str(term)
+        return expression
+        #return " + ".join(str(term) for term in self.terms)
 
     def __eq__(self, other):
         return (isinstance(other, Add) and self.terms == other.terms)
@@ -77,11 +86,19 @@ class Add(Expr):
         target = self.find_by_id(target_id)
         if target in terms:
             terms.remove(target)
-            new_Add = Add(terms)
-            print("popped!")
+            new_Add = Add(*terms)
+            #print("popped!")
+            #print("New Add:", new_Add, "Target:", target)
+            #print(type(new_Add), type(target))
             return new_Add, target
-        print("Not deep enuf!")     
-        
+        print("Not deep enuf!")
+
+    def to_dict(self):
+        return {
+            "type": "add",
+            "terms": [term.to_dict() for term in self.terms],
+            "id": self.id
+        }
 
 class Neg(Expr):
     def __init__(self, expr: Expr):
@@ -119,7 +136,14 @@ class Neg(Expr):
         inner = self.expr.to_latex()
         if isinstance(self.expr, Add):
             return f"-\\left({inner}\\right)"
-        return f"-{inner}"        
+        return f"-{inner}"     
+
+    def to_dict(self):
+        return {
+            "type": "neg",
+            "expr": self.expr.to_dict(),
+            "id": self.id
+        }   
 
 class Mult(Expr):
     def __init__(self, *factors: Expr):
@@ -194,6 +218,13 @@ class Mult(Expr):
             else:
                 parts.append(factor.to_latex())
         return "".join(f"{{{p}}}" for p in parts)
+    
+    def to_dict(self):
+        return {
+            "type": "mult",
+            "factors": [factor.to_dict() for factor in self.factors],
+            "id": self.id
+        }
 
 class Eq(Expr):
     def __init__(self, lhs: Expr, rhs: Expr):
@@ -213,6 +244,12 @@ class Eq(Expr):
     def set_subexprs(self, new_lhs, new_rhs):
         self.lhs = new_lhs
         self.rhs = new_rhs
+    
+    def flatten(self):
+        # Flatten both sides of the equation
+        lhs_flat = self.lhs.flatten()
+        rhs_flat = self.rhs.flatten()
+        return Eq(lhs_flat, rhs_flat)
 
 #This is terrible, but it works for now
 
@@ -226,5 +263,18 @@ class Eq(Expr):
         new_expr, poppie = self.pop_expr(target_id, side)
 
         if side == "lhs":
-            self.lhs = new_expr
-            self.rhs = Add(self.rhs, poppie)
+            lhs_new = new_expr
+            rhs_new = Add(self.rhs, Neg(poppie)).flatten()
+            return Eq(lhs_new, rhs_new)
+        elif side == "rhs":
+            rhs_new = new_expr
+            lhs_new = Add(self.lhs, Neg(poppie))
+            return Eq(lhs_new, rhs_new)
+    
+    def to_dict(self):
+        return {
+            "type": "eq",
+            "lhs": self.lhs.to_dict(),
+            "rhs": self.rhs.to_dict(),
+            "id": self.id
+        }

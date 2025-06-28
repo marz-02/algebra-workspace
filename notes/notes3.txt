@@ -1,0 +1,15 @@
+mylist = ["x","y",2,"w"]
+
+myword = ''
+for i, spot in enumerate(mylist):
+    if i == 0:
+        myword = str(spot)
+    else:
+        if type(spot) == int:
+            myword = myword + " - " + str(spot) 
+        else:
+            myword = myword + " + " + str(spot) 
+
+myword 
+
+print(myword)

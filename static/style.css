@@ -50,6 +50,43 @@ main {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
+.testbutton2 {
+  position: fixed;        /* Removes it from the DOM flow */
+  top: 100px;              /* Distance from the top edge */
+  left: 10px;             /* Distance from the left edge */
+  z-index: 9999;          /* Puts it on top of most elements */
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: #e91e63;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.debug-display {
+  position: fixed;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+
+  width: 80vw;
+  height: 80vh;
+
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+
+  padding: 20px;
+  overflow-y: auto;
+
+  font-family: monospace;
+  font-size: 0.9em;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 .paper {
   background: white;
   width: 90%;
@@ -125,7 +162,7 @@ main {
 }
 
 /* Multiplication: show factors inline */
-.mul {
+.mult {
   flex-direction: row;
   gap: 0.15em;
 }

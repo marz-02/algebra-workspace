@@ -1,86 +1,79 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log("script.js loaded");
 
+  // === Section 1: DOM references ===
+  const testButton = document.getElementById("testButton");
+  const loadExprButton = document.getElementById("loadExprButton");
+  const line = document.getElementById("line1");
+
+  // === Section 2: Event listeners ===
+  if (testButton) {
+    testButton.addEventListener("click", () => {
+      console.log("Test button clicked!");
+      const payload = { expr: "2x + 3" };
+
+      fetch("/process", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+        .then(res => res.json())
+        .then(data => console.log("Response from /process:", data));
+    });
+  }
+
+  if (loadExprButton) {loadExprButton.addEventListener("click", loadExpression);}
+
+  // === Section 3: Fetch on page load ===
+
+  /*
   fetch("/expression")
     .then(res => res.json())
     .then(expr => {
-      const line = document.getElementById("line1");
-      line.innerHTML = "";
-      line.appendChild(renderExpr(expr));
-
-      enableDragging();
+      if (line) {
+        line.innerHTML = "";
+        line.appendChild(renderExpr(expr));
+        enableDragging();  // assumes this is a defined function
+      }
     });
-  
-  
-  
-  const testButton = document.getElementById("testButton");
+  */
 
-  testButton.addEventListener("click", () => {
-    console.log("Button was clicked!");
-    // You can also do something here:
-    // alert("Clicked!");
-    // callBackend();
-    // updateDOM();
-  });
+  // === Section 4: Functions ===
 
-  testButton.addEventListener("click", () => {
-    const payload = { expr: "2x + 3"};
-
-    fetch("/process", {
-      method: "POST",
-      headers: { "Content-Type": "application/json"},
-      body: JSON.stringify(payload)
-    })
-
-    .then(res => res.json())
-    .then(data => {console.log(data);});
-  });
-
-
+  function loadExpression() {
+    fetch("/get_expression") //Fetch is a built-in function in JavaScript that allows you to HTTP requests. Sends GET to flask route /get_expression
+      .then(res => res.json())
+      .then(data => {
+        console.log("Received:", data);
+        debugdisplay(data); // Display the data in a debug plackard
+      })
+      .catch(err => console.error("Fetch error:", err));
+    
+    console.log("Load expression button clicked!");  
+    ;
+  }
 
 });
 
+function debugdisplay(data) {
+  const plackard = document.createElement("div");
+  plackard.className = "debug-display";
+  line1 = document.createElement("div");
+  line2 = document.createElement("div");
+  line1.className = "line";
+  line2.className = "line";
+  line1.id = "line1.1";
+  line2.id = "line1.2";
+  plackard.appendChild(line1);
+  plackard.appendChild(line2);
+  
+  line1.textContent = JSON.stringify(data, null, 2);
+  line2.appendChild(renderExpr(data)); // Assuming data.expr is the expression object
+
+  document.body.appendChild(plackard);
+}
 function renderExpr(expr) {
-  if (expr.type === "Eq") {
-    const eq = document.createElement("span");
-    eq.className = "equation";
-
-    const lhs = document.createElement("span");
-    lhs.className = "expression lhs";
-    lhs.id = "lhs";
-    lhs.appendChild(renderExpr(expr.lhs));
-
-    const equals = document.createElement("span");
-    equals.className = "equals";
-    equals.textContent = "=";
-
-    const rhs = document.createElement("span");
-    rhs.className = "expression rhs";
-    rhs.id = "rhs";
-    rhs.appendChild(renderExpr(expr.rhs));
-
-    eq.appendChild(lhs);
-    eq.appendChild(equals);
-    eq.appendChild(rhs);
-    return eq;
-  }
-
-  if (expr.type === "Add") {
-    const add = document.createElement("span");
-    add.className = "expression add";
-    expr.terms.forEach((term, i) => {
-      add.appendChild(renderExpr(term));
-      if (i < expr.terms.length - 1) {
-        const plus = document.createElement("span");
-        plus.className = "operator";
-        plus.textContent = "+";
-        add.appendChild(plus);
-      }
-    });
-    return add;
-  }
-
-  if (expr.type === "Var") {
+  if (expr.type === "var") {
     const v = document.createElement("span");
     v.className = "expression var";
     v.textContent = expr.name;
@@ -88,74 +81,95 @@ function renderExpr(expr) {
     v.setAttribute("draggable", "true");
     return v;
   }
+  else if (expr.type === "const") {
+    const c = document.createElement("span");
+    c.className = "expression const";
+    c.textContent = expr.value;
+    c.id = expr.id;
+    c.setAttribute("draggable", "true");
+    return c;
+  }
+  else if (expr.type === "neg") {
+    const neg = document.createElement("span");
+    neg.className = "expression neg";
+    neg.textContent = "-";
+    neg.appendChild(renderExpr(expr.expr));
+    return neg;
+  }
+else if (expr.type === "add") {
+  const add = document.createElement("span");
+  add.className = "expression add";
 
-  return document.createTextNode("?");
-}
-function enableDragging() {
-  document.querySelectorAll(".expression.var").forEach(el => {
-    el.addEventListener("dragstart", event => {
-      event.dataTransfer.setData("text/plain", el.id);
-      console.log("Dragging", el.id);
-    });
-  });
+  expr.terms.forEach((term, i) => {
+    let isNeg = term.type === "neg";
 
-  document.querySelectorAll(".lhs, .rhs").forEach(target => {
-    target.addEventListener("dragover", event => {
-      event.preventDefault(); // Allow drop
-    });
+    // First term: show normally (neg or not)
+    if (i === 0) {
+      if (isNeg) {
+        const minus = document.createElement("span");
+        minus.className = "operator";
+        minus.textContent = "-";
+        add.appendChild(minus);
+        add.appendChild(renderExpr(term.expr));  // Skip outer neg
+      } else {
+        add.appendChild(renderExpr(term));
+      }
+    } else {
+      const op = document.createElement("span");
+      op.className = "operator";
+      op.textContent = isNeg ? " - " : " + ";
+      add.appendChild(op);
 
-    target.addEventListener("drop", event => {
-      event.preventDefault();
-      const draggedId = event.dataTransfer.getData("text/plain");
-      const targetId = target.id;
-
-      console.log(`Dropped ${draggedId} onto ${targetId}`);
-    });
-  });
-}
-
-
-
-
-const expr1 = {
-  type: "add",
-  terms: ["x", "y", "z"]
-};
-
-function renderExpression(expr) {
-  const container = document.createElement("div");
-  container.className = "expression";
-
-  expr.terms.forEach((term, index) => {
-    const termDiv = document.createElement("div");
-    termDiv.className = "term";
-    termDiv.textContent = term;
-    container.appendChild(termDiv);
-
-    if (index < expr.terms.length - 1) {
-      const op = document.createElement("div");
-      op.className = "op";
-      op.textContent = getSymbol(expr.type);
-      container.appendChild(op);
+      if (isNeg) {
+        add.appendChild(renderExpr(term.expr));  // Skip outer neg
+      } else {
+        add.appendChild(renderExpr(term));
+      }
     }
   });
 
-  return container;
+  return add;
 }
+  else if (expr.type === "mult") {
+    const mult = document.createElement("span");  
+    mult.className = "expression mult";
+    expr.factors.forEach((factor, i) => {
+      mult.appendChild(renderExpr(factor));
+      if (i < expr.factors.length - 1) {
+        const times = document.createElement("span");
+        times.className = "operator";
+        times.textContent = "×"; // Use multiplication sign
+        mult.appendChild(times);
+      }
+    });
+    return
+  }
+  else if (expr.type === "eq") {
+  const eq = document.createElement("span");
+  eq.className = "equation";
 
-function getSymbol(type) {
-  switch (type) {
-    case "add": return "+";
-    case "mult": return "×";
-    case "sub": return "−";
-    case "div": return "÷";
-    default: return "?";
+  const lhs = document.createElement("span");
+  lhs.className = "expression lhs";
+  lhs.id = "lhs";
+  lhs.appendChild(renderExpr(expr.lhs));
+
+  const equals = document.createElement("span");
+  equals.className = "equals";
+  equals.textContent = "=";
+
+  const rhs = document.createElement("span");
+  rhs.className = "expression rhs";
+  rhs.id = "rhs";
+  rhs.appendChild(renderExpr(expr.rhs));
+
+  eq.appendChild(lhs);
+  eq.appendChild(equals);
+  eq.appendChild(rhs);
+  return eq;
   }
 }
-/*
-document.addEventListener("DOMContentLoaded", () => {
-  const paper = document.getElementById("paper");
-  const exprElem = renderExpression(expr1);
-  paper.appendChild(exprElem);
-});
-*/
+
+
+
+
+  
