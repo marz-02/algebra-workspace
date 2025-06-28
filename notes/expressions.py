@@ -12,6 +12,7 @@ class Expr:
     def __init__(self, name):
         self.name = name
         self.id = str(uuid.uuid4())
+        self.side = None
 
     def __repr__(self):
         return str(self)
@@ -34,7 +35,8 @@ class Expr:
         return None
     
 
-        
+
+
 
 
 
@@ -161,16 +163,7 @@ class Add(Expr):
         # 4) Join with plus signs
         return " + ".join(parts)
     
-    def pop_expr1(self, target_id):
-        terms = self.get_subexprs()
-        target = self.find_by_id(target_id)
-        if target in terms:
-            terms.remove(target)
-            self.set_subexprs(terms)
-            print("popped!")
-            return target
-        print("Not deep enuf!")      
-
+     
     def pop_expr2(self, target_id): 
         terms = self.get_subexprs()
         target = self.find_by_id(target_id)
@@ -313,12 +306,20 @@ class Eq(Expr):
         self.lhs = new_lhs
         self.rhs = new_rhs
 
+#This is terrible, but it works for now
+
     def pop_expr(self, target_id, side):
         if side == "lhs":
             return self.lhs.pop_expr(target_id)
         elif side == "rhs":
             return self.rhs.pop_expr(target_id)
+        
+    def move_expr(self, target_id, side):
+        new_expr, poppie = self.pop_expr(target_id, side)
 
+        if side == "lhs":
+            self.lhs = new_expr
+            self.rhs = Add(self.rhs, poppie)
 x = Var("x")
 
 y = Var("y")

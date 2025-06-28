@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request, jsonify
-from expressions import Expr, Var, Const, Add, Mult, Eq
+from symbolic_math import Expr, Var, Const, Add, Mult, Eq
 import uuid
 app = Flask(__name__) #Creates a new Flask application instance.
+
+
+###---Test-Zone--------------------------------------------------------------------------
 
 line1xx = Eq(
     Add( Var("x"), Var("y")),
@@ -28,7 +31,6 @@ print(line1xx)
 
 print("-------------------------------------------------------------------------------------")
 
-
 def generate_expression():
     def make_var(name):
         return {"type": "Var", "name": name, "id": str(uuid.uuid4())}
@@ -50,6 +52,7 @@ def expression():
     return jsonify(generate_expression())
 
 
+###---End-of-Test-Zone---------------------------------------------------------------------
 
 
 #Defines the homepage route (/). 
@@ -57,8 +60,6 @@ def expression():
 @app.route("/")
 def index():
     return render_template("index.html")  # Loads the page
-
-
 
 #Defines an API route /process that accepts POST requests.
 #Reads JSON data from the incoming request (request.get_json()).
