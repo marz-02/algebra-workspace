@@ -5,6 +5,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const testButton = document.getElementById("testButton");
   const loadExprButton = document.getElementById("loadExprButton");
   const line = document.getElementById("line1");
+  const mathField = document.getElementById("mathField");
+  
+  const submitMathButton = document.getElementById("addButton");
 
   // === Section 2: Event listeners ===
   if (testButton) {
@@ -24,6 +27,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (loadExprButton) {loadExprButton.addEventListener("click", loadExpression);}
 
+
+
+  submitMathButton.addEventListener("click", () => {
+    console.log("Add Expression button clicked!");
+    const latex = mathField.value;
+    const tree = mathField.getValue("math-json")
+    console.log("LaTeX input:", tree);
+    sendUserInput(tree); // Send the LaTeX input to the server
+  
+  // You could also send it to Flask here
+});
+
   // === Section 3: Fetch on page load ===
 
   /*
@@ -39,6 +54,21 @@ document.addEventListener("DOMContentLoaded", () => {
   */
 
   // === Section 4: Functions ===
+
+function sendUserInput(input) {
+  console.log("Sending user input:", input);
+  fetch("/process", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ input })
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Response from /process:", data);
+      // Don't update DOM here — just log or handle silently
+    })
+    .catch(err => console.error("Error in sendUserInput:", err));
+}
 
   function loadExpression() {
     fetch("/get_expression") //Fetch is a built-in function in JavaScript that allows you to HTTP requests. Sends GET to flask route /get_expression
@@ -58,8 +88,8 @@ document.addEventListener("DOMContentLoaded", () => {
 function debugdisplay(data) {
   const plackard = document.createElement("div");
   plackard.className = "debug-display";
-  line1 = document.createElement("div");
-  line2 = document.createElement("div");
+  const line1 = document.createElement("div");
+  const line2 = document.createElement("div");
   line1.className = "line";
   line2.className = "line";
   line1.id = "line1.1";
@@ -142,7 +172,7 @@ else if (expr.type === "add") {
         mult.appendChild(times);
       }
     });
-    return
+    return mult;
   }
   else if (expr.type === "eq") {
   const eq = document.createElement("span");

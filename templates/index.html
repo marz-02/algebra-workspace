@@ -7,6 +7,12 @@
   <title>Expression Page</title>
 
   <link href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap" rel="stylesheet">
+
+  <script src="https://unpkg.com/mathlive"></script>
+  <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive.core.css">
+  <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive.css">
+
+
 </head>
 
 <body>
@@ -15,7 +21,8 @@
   </header>
 
   <section class="controls">
-    <input type="text" id="inputField" placeholder="Type something..." />
+    <math-field id="mathField" style="min-width: 300px; width: 500px; max-width: 600px;"> y = </math-field>
+    <!--<input type="text" id="inputField" placeholder="Type something..." />-->
     <button id="addButton">Add Expression</button>
   </section>
 
@@ -99,6 +106,16 @@
   </main>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+
+  <script type="module">
+    import { MathfieldElement } from "https://esm.run/mathlive";
+    import { ComputeEngine } from "https://esm.run/@cortex-js/compute-engine";
+
+    window.MathfieldElement = MathfieldElement;
+    window.ComputeEngine = ComputeEngine;
+  </script>
+
+
 </body>
 
 </html>

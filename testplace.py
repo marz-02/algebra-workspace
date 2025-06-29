@@ -1,4 +1,5 @@
-from symbolic_math import Var, Const, Add, Mult, Eq
+from symbolic_math import Var, Const, Neg, Add, Mult, Frac, Eq
+from symbolic_math.utils import tokenize_latex, parse_latex_expression
 
 x = Var("x")
 
@@ -91,3 +92,40 @@ print("\n",line1xx,"\n")
 print("-------------------------------------------------------------------------------------")
 
 print(line1xx.to_dict())
+
+print("-------------------------------------------------------------------------------------")
+print("-------------------------------------------------------------------------------------")
+print("-------------------------------------------------------------------------------------")
+
+x = Var("x")
+y = Var("y")
+frac = Frac(x, y)
+print(frac)
+
+a = Const(1)
+b = Add(Var("x"), Const(2))
+c = Frac(a, b)
+print(c)  # Expect: 1 / (x + 2)
+
+lhs = Frac(Add(Var("x"), Var("y")), Const(2))
+rhs = Var("z")
+eq = Eq(lhs, rhs)
+print(eq)  # Expect: (x + y)/2 = z
+
+a = Add(Var("x"), Frac(Var("y"), Const(2)))
+print(a)  # Expect: x + y/2
+
+m = Mult(Const(3), Frac(Var("a"), Var("b")))
+print(m)  # Expect: 3 × (a/b)
+
+frac = Frac(Var("x"), Add(Var("y"), Const(1)))
+print(frac.to_latex())  # Expect: \frac{x}{y + 1}
+
+latex = r"1+\frac{-x}{z}"
+tokens = tokenize_latex(latex)
+print(tokens)
+
+
+latex = r"1+\frac{-x}{z}"
+expr = parse_latex_expression(latex)
+print(expr,"yep")

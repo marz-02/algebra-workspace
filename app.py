@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
-from symbolic_math import Expr, Var, Const, Neg, Add, Mult, Eq
+from symbolic_math import Expr, Var, Const, Neg, Add, Mult, Frac, Eq
+from symbolic_math.utils import tokenize_latex, parse_latex_expression, latex_to_expression_tree, str_to_expression_list, user_input_to_expression_tree
 import uuid
 app = Flask(__name__) #Creates a new Flask application instance.
 
@@ -14,6 +15,32 @@ expr_dict = expr.to_dict()
 def get_expression():
     return jsonify(expr_dict)
 
+@app.route("/process", methods=["POST"])
+def process_input():
+    data = request.get_json()
+    user_input = data.get("input")
+
+    print("Received user input:", user_input)  # This will show up in your Flask terminal
+    
+    print("String to List:",str_to_expression_list(user_input))
+    
+    print("Expression Tree:", user_input_to_expression_tree(user_input))
+
+
+
+
+    # Send the expression tree back to the client
+
+    # For now, just send a dummy response with an echo
+    return jsonify({
+        "status": "ok",
+        "received": user_input,
+        "expr": {
+            "type": "var",
+            "name": user_input or "x",
+            "id": "dummy-id"
+        }
+    })
 
 
 
