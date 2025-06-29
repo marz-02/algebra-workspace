@@ -35,7 +35,14 @@ class Var(Expr):
     
     def to_dict(self):
         return {"type": "var", "name": self.name, "id": self.id}
-
+    
+    """
+    def depth_search(self, target_id, depth=-100):
+        depth += 1
+        if self.id == target_id:
+            return depth
+        return None
+    """
 class Const(Expr):
     def __init__(self, value):
         self.value = value
@@ -66,3 +73,11 @@ class Const(Expr):
     
     def to_dict(self):
         return {"type": "const", "value": self.value, "id": self.id}
+
+    """    
+    def depth_search(self, target_id, depth=-100):
+        depth += 1
+        if self.id == target_id:
+            return depth
+        return None
+    """

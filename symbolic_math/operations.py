@@ -92,6 +92,7 @@ class Add(Expr):
             #print(type(new_Add), type(target))
             return new_Add, target
         print("Not deep enuf!")
+        return self, target
 
     def to_dict(self):
         return {
@@ -289,23 +290,28 @@ class Eq(Expr):
 
 #This is terrible, but it works for now
 
-    def pop_expr(self, target_id, side):
-        if side == "lhs":
+
+    
+    
+    def pop_expr(self, target_id, from_side, to_side):
+        if from_side == "lhs":
             return self.lhs.pop_expr(target_id)
-        elif side == "rhs":
+        elif from_side == "rhs":
             return self.rhs.pop_expr(target_id)
         
-    def move_expr(self, target_id, side):
-        new_expr, poppie = self.pop_expr(target_id, side)
+    def move_expr(self, target_id, from_side, to_side):
+        new_expr, popped_term = self.pop_expr(target_id, from_side, to_side)
 
-        if side == "lhs":
+        if from_side == "lhs":
             lhs_new = new_expr
-            rhs_new = Add(self.rhs, Neg(poppie)).flatten()
-            return Eq(lhs_new, rhs_new)
-        elif side == "rhs":
+            rhs_new = Add(self.rhs, Neg(popped_term)).flatten() if to_side == "rhs" else self.rhs
+        elif from_side == "rhs":
             rhs_new = new_expr
-            lhs_new = Add(self.lhs, Neg(poppie))
-            return Eq(lhs_new, rhs_new)
+            lhs_new = Add(self.lhs, Neg(popped_term)).flatten() if to_side == "lhs" else self.lhs
+        else:
+            raise ValueError("Invalid side")
+
+        return Eq(lhs_new, rhs_new)
     
     def to_dict(self):
         return {

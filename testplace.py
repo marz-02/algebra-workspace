@@ -1,5 +1,7 @@
-from symbolic_math import Var, Const, Neg, Add, Mult, Frac, Eq
+from symbolic_math import Expr, Var, Const, Neg, Add, Mult, Frac, Eq
 from symbolic_math.utils import tokenize_latex, parse_latex_expression
+
+import inspect
 
 x = Var("x")
 
@@ -76,7 +78,7 @@ print("\n",line1xx,"\n")
 idofy = (line1xx.get_subexprs()[0]).get_subexprs()[1].get_id()
 
 
-line1xx = line1xx.move_expr(idofy, "lhs")
+line1xx = line1xx.move_expr(idofy, "lhs" , "rhs")
 print("\n",line1xx,"\n")
 
 #print(line1xx.pop_expr(idofy, "lhs"))
@@ -129,3 +131,47 @@ print(tokens)
 latex = r"1+\frac{-x}{z}"
 expr = parse_latex_expression(latex)
 print(expr,"yep")
+
+
+lhs = Frac(Add(Var("x"), Var("y")), Const(2))
+rhs = Var("z")
+eq1 = Eq(lhs, rhs)
+
+equation1 = Eq( Add( Var("x"), Var("y")),Var("z"))
+
+y_id = (equation1.get_subexprs()[0]).get_subexprs()[1].get_id()
+
+print(equation1.depth_search(y_id))  # Should return the Var("y") object
+
+print(equation1.get_path_to(y_id))  # Should return the path to Var("y")
+
+print(equation1.path_display(y_id))  # Should print the path to Var("y")
+
+#print(dir(Expr))  # includes methods, attributes, and special methods
+
+
+"""
+print(Expr.__subclasses__())
+print("\n\n")
+def all_subclasses(cls):
+    return set(cls.__subclasses__()).union(
+        s for c in cls.__subclasses__() for s in all_subclasses(c)
+    )
+
+
+def list_all_subclasses_and_methods(cls):
+    for subclass in all_subclasses(cls):
+        print(f"\nSubclass: {subclass.__name__}")
+        methods = [name for name, obj in inspect.getmembers(subclass, predicate=inspect.isfunction)
+                   if subclass.__dict__.get(name) is obj]
+        print(f"Methods: {methods}")
+
+list_all_subclasses_and_methods(Expr)
+"""
+"""
+def is_multiplicative_chain(self, target_id):
+    path = self.get_path_to(target_id)
+    if path is None:
+        return False
+    return all(isinstance(node, (Mult, Frac, Pow)) for node in path)
+"""

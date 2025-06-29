@@ -100,16 +100,24 @@ main {
 .equation {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between; /* NEW */
   gap: 0.4em;
   margin: 8px 0;
-  font-size: 1.1em;         /* Slightly larger than base text */
+  font-size: 1.1em;
+  width: 100%; /* ensure full line width */
 }
 
 .lhs,
 .rhs {
-  display: inline-flex;
+  display: flex;
+  flex: 1;                   /* allow both to expand */
   align-items: center;
+}
+.lhs {
+  justify-content: flex-end;  /* align lhs contents to the right */
+}
+.rhs {
+  justify-content: flex-start; /* align rhs contents to the left */
 }
 
 .equals {

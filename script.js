@@ -1,39 +1,62 @@
-let line;
-
-let dragOrigin = null;
-
 document.addEventListener("DOMContentLoaded", () => {
   console.log("script.js loaded");
 
   // === Section 1: DOM references ===
   const testButton = document.getElementById("testButton");
   const loadExprButton = document.getElementById("loadExprButton");
-  line = document.getElementById("line1");
+  const line = document.getElementById("line1");
   const mathField = document.getElementById("mathField");
+  
   const submitMathButton = document.getElementById("addButton");
 
   // === Section 2: Event listeners ===
+  if (testButton) {
+    testButton.addEventListener("click", () => {
+      console.log("Test button clicked!");
+      const payload = { expr: "2x + 3" };
+
+      fetch("/process", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+        .then(res => res.json())
+        .then(data => console.log("Response from /process:", data));
+    });
+  }
 
   if (loadExprButton) {loadExprButton.addEventListener("click", loadExpression);}
 
-  submitMathButton.addEventListener("click", inputSubmit);
-
-  //enableDragging(); // Enable dragging functionality on page load
-});
 
 
-//Takes the input from the math field, converts it to a tree structure, and sends it to the server via sendUserInput
-// This function is called when the "Add Expression" button is clicked
-function inputSubmit() 
-  {
+  submitMathButton.addEventListener("click", () => {
     console.log("Add Expression button clicked!");
     const latex = mathField.value;
     const tree = mathField.getValue("math-json")
-    console.log("Math-json input:", tree);
+    console.log("LaTeX input:", tree);
     sendUserInput(tree); // Send the LaTeX input to the server
-}
+  
+  // You could also send it to Flask here
+});
 
-// Sends the user input to the server for processing, it then contructs the expression tree and updates/creates LINE1 expression.
+  // === Section 3: Fetch on page load ===
+
+  /*
+  fetch("/expression")
+    .then(res => res.json())
+    .then(expr => {
+      if (line) {
+        line.innerHTML = "";
+        line.appendChild(renderExpr(expr));
+        enableDragging();  // assumes this is a defined function
+      }
+    });
+  */
+
+  // === Section 4: Functions ===
+
+
+
 function sendUserInput(input) {
   console.log("Sending user input:", input);
   fetch("/process", {
@@ -53,7 +76,62 @@ function sendUserInput(input) {
     .catch(err => console.error("Error in sendUserInput:", err));
 }
 
-// Renders the expression object into HTML elements
+function sendDragActionToServer(termId, newSide) {
+  fetch("/move_term", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      term_id: termId,
+      target_side: newSide  // "lhs" or "rhs"
+    })
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Server updated expression:", data);
+      // Re-render updated equation if server sends back new expr
+      if (data.expr && line) {
+        line.innerHTML = "";
+        line.appendChild(renderExpr(data.expr));
+        enableDragging(); // Reapply listeners
+      }
+    })
+    .catch(err => console.error("Error sending drag action:", err));
+}
+
+
+
+  function loadExpression() {
+    fetch("/get_expression") //Fetch is a built-in function in JavaScript that allows you to HTTP requests. Sends GET to flask route /get_expression
+      .then(res => res.json())
+      .then(data => {
+        console.log("Received:", data);
+        debugdisplay(data); // Display the data in a debug plackard
+      })
+      .catch(err => console.error("Fetch error:", err));
+    
+    console.log("Load expression button clicked!");  
+    ;
+  }
+enableDragging(); // Enable dragging functionality on page load
+});
+
+function debugdisplay(data) {
+  const plackard = document.createElement("div");
+  plackard.className = "debug-display";
+  const line1 = document.createElement("div");
+  const line2 = document.createElement("div");
+  line1.className = "line";
+  line2.className = "line";
+  line1.id = "line1.1";
+  line2.id = "line1.2";
+  plackard.appendChild(line1);
+  plackard.appendChild(line2);
+  
+  line1.textContent = JSON.stringify(data, null, 2);
+  line2.appendChild(renderExpr(data)); // Assuming data.expr is the expression object
+
+  document.body.appendChild(plackard);
+}
 function renderExpr(expr) {
   if (expr.type === "var") {
     const v = document.createElement("span");
@@ -151,53 +229,35 @@ else if (expr.type === "add") {
   }
 }
 
-function sendDragActionToServer(termId, from, to) {
-  fetch("/move_term", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      term_id: termId,
-      action: "move",
-      from,
-      to
-    })
-  })
-    .then(res => res.json())
-    .then(data => {
-      console.log("Server response:", data);
-      if (data.expr && line) {
-        line.innerHTML = "";
-        line.appendChild(renderExpr(data.expr));
-        enableDragging(); // Re-enable events
-      }
-    })
-    .catch(err => console.error("Drag action error:", err));
-}
+
+
 
 function enableDragging() {
   document.querySelectorAll(".expression.var, .expression.const").forEach(elem => {
     elem.addEventListener("dragstart", e => {
-      e.dataTransfer.setData("text/plain", e.target.id);
-      dragOrigin = e.target.closest(".lhs") ? "lhs" : "rhs";  // Detect origin
+      e.dataTransfer.setData("text/plain", e.target.id); // Save ID of dragged element
+      console.log("Dragging:", e.target.id);
     });
   });
 
+  // Allow drop on lhs and rhs
   ["lhs", "rhs"].forEach(id => {
     const dropZone = document.getElementById(id);
-
     dropZone.addEventListener("dragover", e => {
-      e.preventDefault();
+      e.preventDefault(); // Allow drop
     });
 
     dropZone.addEventListener("drop", e => {
       e.preventDefault();
-      const termId = e.dataTransfer.getData("text/plain");
-      const targetSide = id;
+      const draggedId = e.dataTransfer.getData("text/plain");
+      const draggedElem = document.getElementById(draggedId);
+      console.log("Dropped:", draggedId, "on", id);
 
-      console.log(`Dragging ${termId} from ${dragOrigin} to ${targetSide}`);
+      // Just append for now
+      e.target.appendChild(draggedElem);
 
-      // Don't move it here! Let the server decide.
-      sendDragActionToServer(termId, dragOrigin, targetSide);
+      // Send action to server
+      sendDragActionToServer(draggedId, id);
     });
   });
 }
@@ -205,92 +265,4 @@ function enableDragging() {
 
 
 
-
-
-
-
-
-
-
-
-// === Debugging functions ===
-
-function loadExpression() {
-    fetch("/get_expression") //Fetch is a built-in function in JavaScript that allows you to HTTP requests. Sends GET to flask route /get_expression
-      .then(res => res.json())
-      .then(data => {
-        console.log("Received:", data);
-        debugdisplay(data); // Display the data in a debug plackard
-      })
-      .catch(err => console.error("Fetch error:", err));
-    
-    console.log("Load expression button clicked!");  
-    ;
-}
-
-function debugdisplay(data) {
-  const plackard = document.createElement("div");
-  plackard.className = "debug-display";
-  const line1 = document.createElement("div");
-  const line2 = document.createElement("div");
-  line1.className = "line";
-  line2.className = "line";
-  line1.id = "line1.1";
-  line2.id = "line1.2";
-  plackard.appendChild(line1);
-  plackard.appendChild(line2);
   
-  line1.textContent = JSON.stringify(data, null, 2);
-  line2.appendChild(renderExpr(data)); // Assuming data.expr is the expression object
-
-  document.body.appendChild(plackard);
-}
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  if (testButton) {
-    testButton.addEventListener("click", () => {
-      console.log("Test button clicked!");
-      const payload = { expr: "2x + 3" };
-
-      fetch("/process", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      })
-        .then(res => res.json())
-        .then(data => console.log("Response from /process:", data));
-    });
-  }

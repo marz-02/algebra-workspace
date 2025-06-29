@@ -1,14 +1,10 @@
-let line;
-
-let dragOrigin = null;
-
 document.addEventListener("DOMContentLoaded", () => {
   console.log("script.js loaded");
 
   // === Section 1: DOM references ===
   const testButton = document.getElementById("testButton");
   const loadExprButton = document.getElementById("loadExprButton");
-  line = document.getElementById("line1");
+  const line = document.getElementById("line1");
   const mathField = document.getElementById("mathField");
   const submitMathButton = document.getElementById("addButton");
 
@@ -18,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   submitMathButton.addEventListener("click", inputSubmit);
 
-  //enableDragging(); // Enable dragging functionality on page load
+  enableDragging(); // Enable dragging functionality on page load
 });
 
 
@@ -151,53 +147,50 @@ else if (expr.type === "add") {
   }
 }
 
-function sendDragActionToServer(termId, from, to) {
+function sendDragActionToServer(termId, newSide) {
   fetch("/move_term", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       term_id: termId,
-      action: "move",
-      from,
-      to
+      target_side: newSide  // "lhs" or "rhs"
     })
   })
     .then(res => res.json())
     .then(data => {
-      console.log("Server response:", data);
-      if (data.expr && line) {
-        line.innerHTML = "";
-        line.appendChild(renderExpr(data.expr));
-        enableDragging(); // Re-enable events
-      }
+      console.log("Server updated expression:", data);
+      // Re-render updated equation if server sends back new expr
+      // if (data.expr && line) {line.innerHTML = "";line.appendChild(renderExpr(data.expr));enableDragging(); }
     })
-    .catch(err => console.error("Drag action error:", err));
+    .catch(err => console.error("Error sending drag action:", err));
 }
 
 function enableDragging() {
   document.querySelectorAll(".expression.var, .expression.const").forEach(elem => {
     elem.addEventListener("dragstart", e => {
-      e.dataTransfer.setData("text/plain", e.target.id);
-      dragOrigin = e.target.closest(".lhs") ? "lhs" : "rhs";  // Detect origin
+      e.dataTransfer.setData("text/plain", e.target.id); // Save ID of dragged element
+      console.log("Dragging:", e.target.id);
     });
   });
 
+  // Allow drop on lhs and rhs
   ["lhs", "rhs"].forEach(id => {
     const dropZone = document.getElementById(id);
-
     dropZone.addEventListener("dragover", e => {
-      e.preventDefault();
+      e.preventDefault(); // Allow drop
     });
 
     dropZone.addEventListener("drop", e => {
       e.preventDefault();
-      const termId = e.dataTransfer.getData("text/plain");
-      const targetSide = id;
+      const draggedId = e.dataTransfer.getData("text/plain");
+      const draggedElem = document.getElementById(draggedId);
+      console.log("Dropped:", draggedId, "on", id);
 
-      console.log(`Dragging ${termId} from ${dragOrigin} to ${targetSide}`);
+      // Just append for now
+      e.target.appendChild(draggedElem);
 
-      // Don't move it here! Let the server decide.
-      sendDragActionToServer(termId, dragOrigin, targetSide);
+      // Send action to server
+      sendDragActionToServer(draggedId, id);
     });
   });
 }
