@@ -1,6 +1,8 @@
 from symbolic_math import Expr, Var, Const, Neg, Add, Mult, Frac, Eq
 from symbolic_math.utils import tokenize_latex, parse_latex_expression
 
+from typing import Optional
+
 import inspect
 
 x = Var("x")
@@ -78,8 +80,8 @@ print("\n",line1xx,"\n")
 idofy = (line1xx.get_subexprs()[0]).get_subexprs()[1].get_id()
 
 
-line1xx = line1xx.move_expr(idofy, "lhs" , "rhs")
-print("\n",line1xx,"\n")
+#line1xx = line1xx.move_expr(idofy, "lhs" , "rhs")
+#print("\n",line1xx,"\n")
 
 #print(line1xx.pop_expr(idofy, "lhs"))
 
@@ -138,14 +140,22 @@ rhs = Var("z")
 eq1 = Eq(lhs, rhs)
 
 equation1 = Eq( Add( Var("x"), Var("y")),Var("z"))
+equation2 = Eq( Add( Var("x"), Var("y")),Var("z"))
 
 y_id = (equation1.get_subexprs()[0]).get_subexprs()[1].get_id()
 
 print(equation1.depth_search(y_id))  # Should return the Var("y") object
 
-print(equation1.get_path_to(y_id))  # Should return the path to Var("y")
+path = equation1.get_path_to(y_id)
+print(len(path) if path is not None else 0)
+
+print(equation1.get_path_to(y_id),"yo mr white")  # Should return the path to Var("y")
 
 print(equation1.path_display(y_id))  # Should print the path to Var("y")
+
+print(equation1.remove_expr(y_id))
+
+#print(equation2.remove_expr("afsdfasdf"))
 
 #print(dir(Expr))  # includes methods, attributes, and special methods
 
@@ -175,3 +185,80 @@ def is_multiplicative_chain(self, target_id):
         return False
     return all(isinstance(node, (Mult, Frac, Pow)) for node in path)
 """
+
+x = Var("x")
+xid = x.id
+
+y = Var("y")
+yid = y.id
+
+z = Var("z")
+zid = z.id
+
+eq1 = Eq(Add(x, y), z)
+
+# 2. x = y + z
+eq2 = Eq(x, Add(y, z))
+
+# 3. x / y = z
+eq3 = Eq(Frac(x, y), z)
+
+# 4. (x + y) / z = Const(1)
+eq4 = Eq(Frac(Add(x, y), z), Const(1))
+
+# 5. (x * y) + (z / 2) = Const(0)
+eq5 = Eq(
+    Add(
+        Mult(x, y),
+        Frac(z, Const(2))
+    ),
+    Const(0)
+)
+
+# 6. Nested fraction: ((x / y) / z) = Const(5)
+eq6 = Eq(Frac(Frac(x, y), z), Const(5))
+
+# 7. Flat multiplication: x * y * z = 3
+eq7 = Eq(Mult(x, y, z), Const(3))
+
+# 8. x + x = 2x
+eq8 = Eq(Add(y, z), Mult(Const(2), x))
+
+print("\n--------------------------------------------------------")
+print(eq1)
+print(eq2)
+print(eq3)
+print(eq4)
+print(eq5)
+print(eq6)
+print(eq7)
+print(eq8)
+print("--------------------------------------------------------\n")
+
+[eq1,eq2,eq3,eq4,eq5,eq6,eq7,eq8] # type: ignore
+[xid,yid,zid] # type: ignore
+i1 = 1
+i2 = 1
+
+for equation in [eq1,eq2,eq3,eq4,eq5,eq6,eq7,eq8]:
+    for var in [x,y,z]:
+        print("\n")
+        if i2 is 4:
+            i1 += 1
+            i2 = 1
+
+        print(f"#{i1}.{i2}")
+        i2 += 1
+        print(equation)
+        print(f"moving {var}")
+        #print((equation.remove_expr(id)))
+        #path: Optional[list] = equation.get_path_to(id)
+        try:
+            if var in equation[0]:
+                print(equation.move_expr(var.get_id(),"lhs","rhs"))
+            elif var in equation[1]:
+                print(equation.move_expr(var.get_id(),"rhs","lhs"))
+        #print(equation.move_expr(id,"lhs","rhs"))
+        except ValueError as e:
+            print(f"Error: {e}")
+

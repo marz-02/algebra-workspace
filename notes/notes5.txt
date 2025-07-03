@@ -1,0 +1,9 @@
+def __init__(self, *terms: Optional[Expr]):
+    filtered_terms = [term for term in terms if term is not None]
+
+    if not filtered_terms:
+        raise ValueError(f"{type(self).__name__} must contain at least one term")
+
+    self.terms: List[Expr] = filtered_terms
+
+[new_item for item in iterable if condition]

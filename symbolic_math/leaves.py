@@ -22,6 +22,11 @@ class Var(Expr):
     def get_subexprs(self):
         return []
 
+    def clone(self): #Might need to raise an error
+        new_Var = Var(self.name)
+        new_Var.id = self.id
+        return new_Var
+    
     def replace(self, old, new):
         if self == old:
             return new
@@ -45,7 +50,7 @@ class Var(Expr):
     """
 class Const(Expr):
     def __init__(self, value):
-        self.value = value
+        self.value = str(value)
         self.id = str(uuid.uuid4())
 
     def __str__(self):
@@ -60,6 +65,12 @@ class Const(Expr):
     def get_subexprs(self):
         return []
 
+    def clone(self): #Might need to raise an error
+        new_Const = Const(self.value)
+        new_Const.id = self.id
+        return new_Const
+    
+    
     def replace(self, old, new):
         if self == old:
             return new

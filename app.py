@@ -51,11 +51,16 @@ def move_term():
         return jsonify({"status": "error", "message": "No current expression loaded"}), 400
     print(f"Current expression: {CURRENT_EXPRESSION}")
 
-    if original_side in ["lhs", "rhs"] and target_side in ["lhs", "rhs"]:
-        if original_side != target_side:
-            CURRENT_EXPRESSION = CURRENT_EXPRESSION.move_expr(term_id, original_side, target_side)
+    
+    # THIS IS GOING TO BE USED  
+    
+    #if original_side in ["lhs", "rhs"] and target_side in ["lhs", "rhs"]:
+    #    if original_side != target_side:
+    #        CURRENT_EXPRESSION = CURRENT_EXPRESSION.move_expr(term_id, original_side, target_side)
  
-    print(f"Moved expression: {CURRENT_EXPRESSION.move_expr(term_id, original_side, target_side)}")
+    #print(f"Moved expression: {CURRENT_EXPRESSION.move_expr(term_id, original_side, target_side)}")
+    
+    
     #CURRENT_EXPRESSION = move_expr(self, target_id, side):
     # Basic demonstration logic:
     # Just print, or simulate moving the term.
